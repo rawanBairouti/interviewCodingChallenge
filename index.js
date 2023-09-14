@@ -1,7 +1,7 @@
 /**
  * B-I-N-G-O
  *
- * A Bingo card contain 25 squares arranged in a 5x5 grid (five columns
+ * A Bingo Card contain 25 squares arranged in a 5x5 grid (five columns
  * and five rows). Each space in the grid contains a number between 1
  * and 75. The center space is marked "FREE" and is automatically filled.
  *
@@ -19,25 +19,45 @@
  * will pass valid data to your function.
  */
 
-function checkForBingo (bingoCard, drawnNumbers) {
-  // this code for debug purposes, you can remove.
-  console.log('Drawn Numbers: ' + JSON.stringify(drawnNumbers));
 
-  for (let i=0, len=bingoCard.length; i<len; i++) {
-    let row = Math.floor(i/5);
-    let col = i % 5;
-   //  console.log(`${row},${col}: ${bingoCard[i]}`);
+function checkForBingo(bingoCard, drawnNumbers) {
+  const size = Math.sqrt(bingoCard.length);
+
+  // Create arrays to keep track of drawn numbers in each row, column, and diagonals.
+  const rowCount = new Array(size).fill(0);
+  const colCount = new Array(size).fill(0);
+  let mainDiagonalCount = 0;
+  let antiDiagonalCount = 0;
+
+  for (let index = 0; index < bingoCard.length; index++) {
+    const cell = bingoCard[index];
+    const row = Math.floor(index / size);
+    const col = index % size;
+
+    // Update counts if the number is drawn or if it's the "FREE" cell.
+    if (drawnNumbers.includes(cell) || cell === 'FREE') {
+      rowCount[row]++;
+      colCount[col]++;
+      if (row === col) mainDiagonalCount++;
+      if (row + col === size - 1) antiDiagonalCount++;
+    }
+
+    // Check if any row, column, or diagonal is complete.
+    if (rowCount[row] === size || colCount[col] === size || mainDiagonalCount === size || antiDiagonalCount === size) {
+      return true;
+    }
   }
 
   return false;
 }
+
 
 module.exports = checkForBingo;
 
 // here are some samples
 
 // this should return true with diagonal + free
-checkForBingo(
+console.log(checkForBingo(
   [
     8, 29, 35, 54, 65,
     13, 24, 44, 48, 67,
@@ -48,10 +68,10 @@ checkForBingo(
   [
     8, 24, 53, 72
   ]
-);
+));
 
 // this should return false
-checkForBingo(
+console.log(checkForBingo(
   [
    8, 29, 35, 54, 65,
    13, 24, 44, 48, 67,
@@ -62,4 +82,4 @@ checkForBingo(
   [
     1, 33, 53, 65, 29, 75
   ]
-);
+));
